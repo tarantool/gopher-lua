@@ -331,3 +331,30 @@ function test()
 	assert(os.time(t1) == os.time(t6))
 end
 test()
+
+-- issue #363
+-- Any expression enclosed in parentheses always results in only one value.
+function test()
+    function ret2(a, b)
+        return a, b
+    end
+    function enclosed_ret()
+        return (ret2(1, 2))
+    end
+    local a,b = enclosed_ret()
+    assert(a == 1 and b == nil)
+
+    function enclosed_vararg_ret(...)
+        return (...)
+    end
+    local a,b,c=enclosed_vararg_ret(1, 2, 3)
+    assert(a == 1 and b == nil and c == nil)
+
+    function enclosed_vararg_assign(...)
+        local a,b,c = (...)
+        return a,b,c
+    end
+    local a,b,c=enclosed_vararg_assign(1, 2, 3)
+    assert(a == 1 and b == nil and c == nil)
+end
+test()
